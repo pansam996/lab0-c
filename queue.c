@@ -57,6 +57,9 @@ bool q_insert_head(queue_t *q, char *s)
     snprintf(newh->value, strlen(s) + 1, "%s", s);
     newh->next = q->head;
     q->head = newh;
+    if (!q->tail) {
+        q->tail = newh;
+    }
     q->size++;
     return true;
 }
@@ -70,9 +73,27 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    /* TODO: You need to write the complete code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
+    list_ele_t *newt;
+    if (!q)
+        return false;
+    newt = malloc(sizeof(list_ele_t));
+    if (!newt)
+        return false;
+    newt->value = malloc(sizeof(char) * (strlen(s) + 1));
+    if (!newt->value) {
+        free(newt);
+        return false;
+    }
+    snprintf(newt->value, strlen(s) + 1, "%s", s);
+    newt->next = NULL;
+    q->size++;
+    if (!q->tail) {
+        q->head = newt;
+        q->tail = newt;
+        return true;
+    }
+    q->tail->next = newt;
+    q->tail = newt;
     return false;
 }
 
