@@ -94,7 +94,7 @@ bool q_insert_tail(queue_t *q, char *s)
     }
     q->tail->next = newt;
     q->tail = newt;
-    return false;
+    return true;
 }
 
 /*
@@ -141,8 +141,22 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || q->size == 0)
+        return;
+    /*idea : move all the elements behide to the tail */
+
+    list_ele_t *tmp;
+    q->tail->next = q->head;
+
+    while (q->head->next != q->tail) {
+        tmp = q->head->next;
+        q->head->next = tmp->next;
+        tmp->next = q->tail->next;
+        q->tail->next = tmp;
+    }
+    q->tail = q->head;
+    q->head = q->head->next;
+    q->tail->next = NULL;
 }
 
 /*
