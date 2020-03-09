@@ -6,6 +6,12 @@
 
 #include "harness.h"
 
+/* private functions for sort */
+static list_ele_t *merge(list_ele_t *left, list_ele_t *right);
+static list_ele_t *merge_sort(list_ele_t *head);
+
+/*  conditional compilation for merge sort */
+#define RECURSIVE_MERGEx
 /*
  * Create empty queue.
  * Return NULL if could not allocate space.
@@ -17,6 +23,7 @@ queue_t *q_new()
         return NULL;
     q->size = 0;
     q->head = NULL;
+    q->tail = NULL;
     return q;
 }
 
@@ -166,6 +173,91 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || !q->head) /* ignore NULL and empty queue */
+        return;
+    if (!q->head->next)
+        return;
+    q->head = merge_sort(q->head);
+    while (q->tail->next) { /* update the tail pointer */
+        q->tail = q->tail->next;
+    }
 }
+
+/* merge sort algorithm */
+static list_ele_t *merge_sort(list_ele_t *head)
+{
+    /* merge sort */
+    if (!head || !head->next)
+        return head;
+    list_ele_t *slow = head;
+    list_ele_t *fast = head->next;
+    /* split list */
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    fast = slow->next;
+    slow->next = NULL;
+    /* sort each list */
+    list_ele_t *left = merge_sort(head);
+    list_ele_t *right = merge_sort(fast);
+    /* merge sorted left and sorted right */
+    return merge(left, right);
+}
+
+#ifdef RECURSIVE_MERGE
+/* recursive merge */
+static list_ele_t *merge(list_ele_t *left, list_ele_t *right)
+{
+    if (!left)
+        return right;
+    if (!right)
+        return left;
+
+    if (strcasecmp(left->value, right->value) < 0) {
+        left->next = merge(left->next, right);
+        return left;
+    } else {
+        right->next = merge(left, right->next);
+        return right;
+    }
+}
+#else
+/* iterative merge */
+static list_ele_t *merge(list_ele_t *left, list_ele_t *right)
+{
+    if (!left)
+        return right;
+    if (!right)
+        return left;
+
+    list_ele_t *head = NULL; /* pseudo head */
+    list_ele_t *tmp = NULL;
+    /* decide the first element and use it as pseudo head */
+    if (strcasecmp(left->value, right->value) < 0) {
+        head = left;
+        left = left->next;
+    } else {
+        head = right;
+        right = right->next;
+    }
+    /* merge remaining elements to pseudo head */
+    tmp = head;
+    while (left && right) {
+        if (strcasecmp(left->value, right->value) < 0) {
+            tmp->next = left;
+            left = left->next;
+
+        } else {
+            tmp->next = right;
+            right = right->next;
+        }
+        tmp = tmp->next;
+    }
+    if (left)
+        tmp->next = left;
+    if (right)
+        tmp->next = right;
+    return head;
+}
+#endif
