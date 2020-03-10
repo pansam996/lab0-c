@@ -11,7 +11,9 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+
 #include "dudect/fixture.h"
+#include "natsort/strnatcmp.h"
 
 /* Our program needs to use regular malloc/free */
 #define INTERNAL 1
@@ -29,9 +31,8 @@
  * OK as long as head field of queue_t structure is in first position in
  * solution code
  */
-#include "queue.h"
-
 #include "console.h"
+#include "queue.h"
 #include "report.h"
 
 /* Settable parameters */
@@ -558,7 +559,7 @@ bool do_sort(int argc, char *argv[])
         for (list_ele_t *e = q->head; e && --cnt; e = e->next) {
             /* Ensure each element in ascending order */
             /* FIXME: add an option to specify sorting order */
-            if (strcasecmp(e->value, e->next->value) > 0) {
+            if (strnatcmp(e->value, e->next->value) > 0) {
                 report(1, "ERROR: Not sorted in ascending order");
                 ok = false;
                 break;

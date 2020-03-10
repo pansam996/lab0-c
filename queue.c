@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "harness.h"
-
+#include "natsort/strnatcmp.h"
 /* private functions for sort */
 static list_ele_t *merge(list_ele_t *left, list_ele_t *right);
 static list_ele_t *merge_sort(list_ele_t *head);
@@ -214,7 +214,7 @@ static list_ele_t *merge(list_ele_t *left, list_ele_t *right)
     if (!right)
         return left;
 
-    if (strcasecmp(left->value, right->value) < 0) {
+    if (strnatcmp(left->value, right->value) < 0) {
         left->next = merge(left->next, right);
         return left;
     } else {
@@ -234,7 +234,7 @@ static list_ele_t *merge(list_ele_t *left, list_ele_t *right)
     list_ele_t *head = NULL; /* pseudo head */
     list_ele_t *tmp = NULL;
     /* decide the first element and use it as pseudo head */
-    if (strcasecmp(left->value, right->value) < 0) {
+    if (strnatcmp(left->value, right->value) < 0) {
         head = left;
         left = left->next;
     } else {
@@ -244,7 +244,7 @@ static list_ele_t *merge(list_ele_t *left, list_ele_t *right)
     /* merge remaining elements to pseudo head */
     tmp = head;
     while (left && right) {
-        if (strcasecmp(left->value, right->value) < 0) {
+        if (strnatcmp(left->value, right->value) < 0) {
             tmp->next = left;
             left = left->next;
 
