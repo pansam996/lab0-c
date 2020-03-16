@@ -226,38 +226,26 @@ static list_ele_t *merge(list_ele_t *left, list_ele_t *right)
 /* iterative merge */
 static list_ele_t *merge(list_ele_t *left, list_ele_t *right)
 {
-    if (!left)
-        return right;
-    if (!right)
-        return left;
+    /*use pointer to poointer to simplyfy */
+    list_ele_t *head = NULL;
+    list_ele_t **tmp = &head;
 
-    list_ele_t *head = NULL; /* pseudo head */
-    list_ele_t *tmp = NULL;
-    /* decide the first element and use it as pseudo head */
-    if (strnatcmp(left->value, right->value) < 0) {
-        head = left;
-        left = left->next;
-    } else {
-        head = right;
-        right = right->next;
-    }
-    /* merge remaining elements to pseudo head */
-    tmp = head;
     while (left && right) {
         if (strnatcmp(left->value, right->value) < 0) {
-            tmp->next = left;
+            *tmp = left;
             left = left->next;
-
         } else {
-            tmp->next = right;
+            *tmp = right;
             right = right->next;
         }
-        tmp = tmp->next;
+        tmp = &((*tmp)->next);
     }
+
     if (left)
-        tmp->next = left;
+        *tmp = left;
     if (right)
-        tmp->next = right;
+        *tmp = right;
+
     return head;
 }
 #endif
